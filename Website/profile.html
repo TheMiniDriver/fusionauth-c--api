@@ -1,0 +1,54 @@
+<html>
+
+<head>
+
+
+
+</head>
+
+<body>
+    <h1>Here is your FusionAuth Profile</h1>
+    <p id="profile">
+
+    </p>
+
+    <button id="call-api-button">Call the API</button>
+
+    <p id="api-results"> </p>
+</body>
+
+
+<script>
+    const response = fetch(
+        "http://localhost:9011/app/me/",
+        {
+            method: 'GET',
+            credentials: "include"
+        }
+    );
+    
+    response.then((response) => {
+        return response.json();
+    }).then((json) => {
+        document.getElementById("profile").innerHTML = JSON.stringify(json);
+    });
+
+    // Call the API on button press
+    document.getElementById("call-api-button").onclick = function () {
+        console.log("Calling the API");
+        const response = fetch(
+            "http://localhost:3001/secure",
+            {
+                method: 'GET',
+                credentials: "include"
+            }
+        );
+        response.then((response) => {
+            return response.json();
+        }).then((json) => {
+            document.getElementById("api-results").innerHTML = JSON.stringify(json);
+        });
+    };
+
+</script>
+</html>
