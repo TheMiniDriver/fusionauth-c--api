@@ -11,6 +11,12 @@ Service should return JSON if jwt is valid. Check signature using lib, not using
 Small bit of js on the browser to call the API, if it gets a 401, should call the refresh endpoint.
 
 
+## Running 
+To run the Website project, cd into the directory and run: 
+```
+npx http-server -a localhost -p 3000
+```
+
 ## Notes:
 
 - Add CORS on FusionAuth for the front end to get the user profile. Enabled "allow credentials in config"
