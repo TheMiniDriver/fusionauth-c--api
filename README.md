@@ -12,7 +12,7 @@ Small bit of js on the browser to call the API, if it gets a 401, should call th
 
 
 ## Running 
-To run the Website project, cd into the directory and run: 
+To run the Website project, cd into the 'Website' directory and run: 
 ```
 npx http-server -a localhost -p 3000
 ```

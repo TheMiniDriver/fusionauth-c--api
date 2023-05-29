@@ -1,54 +1,77 @@
 <html>
 
 <head>
-
-
-
+    <title>FusionAuth Hosted Backend API Demo</title>
 </head>
 
 <body>
-    <h1>Here is your FusionAuth Profile</h1>
-    <p id="profile">
+    <h2>Here is your FusionAuth Profile, from calling the /me endpoint on FusionAuth</h1>
+        <p><em> if it is not showing, it means you are not logged in</em></p>
+        <pre id="profile"></pre>
 
-    </p>
+        <button id="call-api-button">Call the API</button>
+        <button id="refresh-token-button">Refresh the Token</button>
 
-    <button id="call-api-button">Call the API</button>
-
-    <p id="api-results"> </p>
+        <h2>Here are the results of calling the API</h2>
+        <pre id="api-results"> </pre>
 </body>
 
 
 <script>
-    const response = fetch(
-        "http://localhost:9011/app/me/",
-        {
-            method: 'GET',
-            credentials: "include"
-        }
-    );
-    
-    response.then((response) => {
-        return response.json();
-    }).then((json) => {
-        document.getElementById("profile").innerHTML = JSON.stringify(json);
-    });
 
-    // Call the API on button press
-    document.getElementById("call-api-button").onclick = function () {
-        console.log("Calling the API");
-        const response = fetch(
-            "http://localhost:3001/secure",
+
+    (async () => {
+        const response = await fetch(
+            "http://localhost:9011/app/me/",
             {
                 method: 'GET',
                 credentials: "include"
             }
         );
-        response.then((response) => {
-            return response.json();
-        }).then((json) => {
-            document.getElementById("api-results").innerHTML = JSON.stringify(json);
-        });
-    };
+        const fusionProfile = await response.json();
+        document.getElementById("profile").innerHTML = JSON.stringify(fusionProfile, null, 2);
+    }
+    )();
+
+
+
+    // Call the API on button press
+    document.getElementById("call-api-button").onclick = async function () {
+
+        let response = await fetch(
+            "http://localhost:5000/identity",
+            {
+                method: 'GET',
+                credentials: "include"
+            }
+        );
+
+        if (response.status == 401) {
+            // Refresh the token
+            console.log("401 error, refreshing token...");
+            const refreshResponse = await fetch(
+                "http://localhost:9011/app/refresh/deedc32d-70f1-4628-8350-e53b6021eb5d",
+                {
+                    method: 'POST',
+                    credentials: "include",
+                    body: ""
+                }
+            );
+
+            // retry the call to the api after refresh:
+            console.log("Retrying the call to the API..")
+            response = await fetch(
+                "http://localhost:5000/identity",
+                {
+                    method: 'GET',
+                    credentials: "include"
+                }
+            );
+        }
+        const claims = await response.json();
+        document.getElementById("api-results").innerHTML = JSON.stringify(claims, null, 4);
+    }
 
 </script>
+
 </html>

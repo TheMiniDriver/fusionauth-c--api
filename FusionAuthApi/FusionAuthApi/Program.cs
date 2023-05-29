@@ -33,6 +33,17 @@ builder.Services.AddAuthorization(options =>
     })
 );
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "AllowLocalFrontendCORS",
+                      policy =>
+                      {
+                          policy
+                            .WithOrigins("http://localhost:3000")
+                            .AllowCredentials();
+                      });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -42,6 +53,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("AllowLocalFrontendCORS");
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
